@@ -3,7 +3,7 @@
 1.  npm install
 2.  ionic state restore
 3.  ionic platform add android
-4.  ionic build
+4.  ionic build android
 
 ## Cordova 插件
 
