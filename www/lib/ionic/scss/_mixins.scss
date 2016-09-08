@@ -14,9 +14,11 @@
   }
   &.active,
   &.activated {
-    border-color: $active-border-color;
+    @if $active-border-color != ""{
+      border-color: $active-border-color;
+    }
     background-color: $active-bg-color;
-    box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+    //box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
   }
 }
 
@@ -100,6 +102,10 @@
 @mixin item-active-style($active-bg-color, $active-border-color) {
   border-color: $active-border-color;
   background-color: $active-bg-color;
+  &.item-complex > .item-content {
+    border-color: $active-border-color;
+    background-color: $active-bg-color;
+  }
 }
 
 
@@ -117,6 +123,9 @@
 
 @mixin range-style($track-bg-color) {
   &::-webkit-slider-thumb:before {
+    background: $track-bg-color;
+  }
+  &::-ms-fill-lower{
     background: $track-bg-color;
   }
 }

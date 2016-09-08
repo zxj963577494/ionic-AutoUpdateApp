@@ -79,6 +79,10 @@ textarea {
     min-width: 14px;
   }
 }
+// prevent flex-shrink on WP
+.platform-windowsphone .item-input input{
+  flex-shrink: 1;
+}
 
 .item-input-inset {
   @include display-flex();
@@ -150,6 +154,15 @@ textarea {
 .item-stacked-label input {
   overflow: hidden;
   height: $line-height-computed + $font-size-base + 12px;
+}
+
+.item-select.item-stacked-label select {
+  position: relative;
+  padding: 0px;
+  max-width: 90%;
+  direction:ltr;
+  white-space: pre-wrap;
+  margin: -3px;
 }
 
 .item-floating-label {

@@ -1,116 +1,119 @@
-## 准备工作
-### Cordova插件：
-#### cordova plugin add https://github.com/whiteoctober/cordova-plugin-app-version.git  // 获取APP版本
-#### cordova plugin add org.apache.cordova.file // 文件系统
-#### cordova plugin add org.apache.cordova.file-transfer //文件传输系统
-####cordova plugin add https://github.com/pwlin/cordova-plugin-file-opener2 //文件打开系统
+## 使用步骤
+
+1.  npm install
+2.  ionic state restore
+3.  ionic platform add android
+4.  ionic build
+
+## Cordova 插件
+
+*   cordova plugin add cordova-plugin-device
+*   cordova plugin add cordova-plugin-console
+*   cordova plugin add cordova-plugin-whitelist
+*   cordova plugin add cordova-plugin-splashscreen
+*   cordova plugin add cordova-plugin-statusbar
+*   cordova plugin add ionic-plugin-keyboard
+*   cordova plugin add cordova-plugin-app-version
+*   cordova plugin add cordova-plugin-file
+*   cordova plugin add cordova-plugin-file-transfer
+*   cordova plugin add cordova-plugin-file-opener2
+*   cordova plugin add cordova-plugin-network-information
 
 ## AngularJS Cordova插件
-####ngCordova
+
+### [ngCordova](http://ngcordova.com/)
 
 ## 相关代码，app.js
 ``` javascript
-.run(['$ionicPlatform', '$rootScope','$ionicActionSheet', '$timeout','$cordovaAppVersion', '$ionicPopup', '$ionicLoading','$cordovaFileTransfer', '$cordovaFile', '$cordovaFileOpener2', function ($ionicPlatform, $rootScope,$ionicActionSheet, $timeout,  $cordovaAppVersion, $ionicPopup, $ionicLoading, $cordovaFileTransfer, $cordovaFile, $cordovaFileOpener2) {
-        $ionicPlatform.ready(function ($rootScope) {
-            // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-            // for form inputs)
-            if (window.cordova && window.cordova.plugins.Keyboard) {
-                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-            }
-            if (window.StatusBar) {
-                // org.apache.cordova.statusbar required
-                StatusBar.styleDefault();
-            }
+    // Android升级
+    function checkUpdate() {
+      document.addEventListener("deviceready", function () {
 
-            //检测更新
-            checkUpdate();
+        var type = $cordovaNetwork.getNetwork();
 
-            document.addEventListener("menubutton", onHardwareMenuKeyDown, false);
-        });
+        // 1.0.0 => 10000
+        var AppVersionCode = '10000';  // 获取的服务器版本
 
+        //获取本地APP版本
+        $cordovaAppVersion.getVersionNumber().then(function (version) {
+          // 0.0.1 => 00001 => 1
+          var nowVersionNum = parseInt(version.toString().replace(new RegExp(/(\.)/g), '0'));
+          // 10000
+          var newVersionNum = parseInt(AppVersionCode);
 
-        // 菜单键
-        function onHardwareMenuKeyDown() {
-            $ionicActionSheet.show({
-                titleText: '检查更新',
-                buttons: [
-                    { text: '关于' }
-                ],
-                destructiveText: '检查更新',
-                cancelText: '取消',
-                cancel: function () {
-                    // add cancel code..
-                },
-                destructiveButtonClicked: function () {
-                    //检查更新
-                    checkUpdate();
-                },
-                buttonClicked: function (index) {
-
-                }
-            });
-            $timeout(function () {
-                hideSheet();
-            }, 2000);
-        };
-
-        // 检查更新
-        function checkUpdate() {
-            var serverAppVersion = "1.0.0"; //从服务端获取最新版本
-            //获取版本
-            $cordovaAppVersion.getAppVersion().then(function (version) {
-                //如果本地于服务端的APP版本不符合
-                if (version != serverAppVersion) {
-                    showUpdateConfirm();
-                }
-            });
-        }
-
-        // 显示是否更新对话框
-        function showUpdateConfirm() {
-            var confirmPopup = $ionicPopup.confirm({
+          if (newVersionNum > nowVersionNum) {
+            if (type === 'wifi') {
+              $ionicPopup.confirm({
                 title: '版本升级',
-                template: '1.xxxx;</br>2.xxxxxx;</br>3.xxxxxx;</br>4.xxxxxx', //从服务端获取更新的内容
+                template: '版本升级详细内容,你现在下载的是QQ',
                 cancelText: '取消',
                 okText: '升级'
-            });
-            confirmPopup.then(function (res) {
+              }).then(function (res) {
                 if (res) {
-                    $ionicLoading.show({
-                        template: "已经下载：0%"
-                    });
-                    var url = "http://192.168.1.50/1.apk"; //可以从服务端获取更新APP的路径
-                    var targetPath = "file:///storage/sdcard0/Download/1.apk"; //APP下载存放的路径，可以使用cordova file插件进行相关配置
-                    var trustHosts = true
-                    var options = {};
-                    $cordovaFileTransfer.download(url, targetPath, options, trustHosts).then(function (result) {
-                        // 打开下载下来的APP
-                        $cordovaFileOpener2.open(targetPath, 'application/vnd.android.package-archive'
-                        ).then(function () {
-                                // 成功
-                            }, function (err) {
-                                // 错误
-                            });
-                        $ionicLoading.hide();
-                    }, function (err) {
-                        alert('下载失败');
-                    }, function (progress) {
-                        //进度，这里使用文字显示下载百分比
-                        $timeout(function () {
-                            var downloadProgress = (progress.loaded / progress.total) * 100;
-                            $ionicLoading.show({
-                                template: "已经下载：" + Math.floor(downloadProgress) + "%"
-                            });
-                            if (downloadProgress > 99) {
-                                $ionicLoading.hide();
-                            }
-                        })
-                    });
-                } else {
-                    // 取消更新
+                  UpdateForAndroid();
                 }
-            });
-        }
-    }])  
+              });
+            } else {
+              $ionicPopup.confirm({
+                title: '建议您在WIFI条件下进行升级，是否确认升级？',
+                template: '版本升级详细内容,你现在下载的是QQ',
+                cancelText: '取消',
+                okText: '升级'
+              }).then(function (res) {
+                if (res) {
+                  UpdateForAndroid();
+                }
+              });
+            }
+          }
+        });
+
+        // 无网络时
+        $rootScope.$on('$cordovaNetwork:offline', function (event, networkState) {
+
+          $ionicLoading.show({
+            template: '网络异常，不能连接到服务器！'
+          });
+
+          $timeout(function () {
+            $ionicLoading.hide()
+          }, 2000);
+        })
+      }, false);
+    }
+
+    function UpdateForAndroid() {
+      $ionicLoading.show({
+        template: "已经下载：0%"
+      });
+      var url = 'https://qd.myapp.com/myapp/qqteam/AndroidQQ/mobileqq_android.apk'; // 下载地址
+      var targetPath = "/sdcard/Download/ionic.apk";
+      var trustHosts = true;
+      var options = {};
+      $cordovaFileTransfer.download(url, targetPath, options, trustHosts).then(function (result) {
+        $cordovaFileOpener2.open(targetPath, 'application/vnd.android.package-archive'
+        ).then(function () {
+          // 成功
+        }, function (err) {
+          console.log(err);
+        });
+        $ionicLoading.hide();
+      }, function (err) {
+        $ionicLoading.show({
+          template: "下载失败"
+        });
+        $ionicLoading.hide();
+      }, function (progress) {
+        $timeout(function () {
+          var downloadProgress = (progress.loaded / progress.total) * 100;
+          $ionicLoading.show({
+            template: "已经下载：" + Math.floor(downloadProgress) + "%"
+          });
+          if (downloadProgress > 99) {
+            $ionicLoading.hide();
+          }
+        });
+      });
+    }
 ```
 上面是一个简单实现方式，可以优化代码，一些数据都在这里写死了，你可以将一些数据从服务端获取，比如最新版本号，最新版的下载路径，这里提供一个思路。

@@ -13,7 +13,7 @@
   left: 0;
   z-index: $z-index-bar;
 
-  box-sizing: border-box;
+  @include box-sizing(border-box);
   padding: $bar-padding-portrait;
 
   width: 100%;
@@ -99,7 +99,7 @@
   &.bar-balanced {
     @include bar-style($bar-balanced-bg, $bar-balanced-border, $bar-balanced-text);
     &.bar-footer{
-      background-image: linear-gradient(180deg, $bar-balanced-border, $bar-positive-border 50%, transparent 50%);
+      background-image: linear-gradient(180deg, $bar-balanced-border, $bar-balanced-border 50%, transparent 50%);
     }
   }
   &.bar-energized {
@@ -123,6 +123,7 @@
 
   // Title inside of a bar is centered
   .title {
+    display: block;
     position: absolute;
 
     top: 0;
@@ -159,7 +160,7 @@
     color: inherit;
   }
 
-  .button {
+  .button, button {
     z-index: $z-index-bar-button;
     padding: 0 $button-bar-button-padding;
     min-width: initial;
@@ -365,6 +366,11 @@
   &.item-input-inset {
     position: absolute;
   }
+
+  .title {
+    height: $bar-footer-height - 1;
+    line-height: $bar-footer-height;
+  }
 }
 
 // Don't render padding if the bar is just for tabs
@@ -374,15 +380,23 @@
 
 .bar-subheader {
   top: $bar-height;
-  display: block;
 
   height: $bar-subheader-height;
+
+  .title {
+    height: $bar-subheader-height - 1;
+    line-height: $bar-subheader-height;
+  }
 }
 .bar-subfooter {
   bottom: $bar-footer-height;
-  display: block;
 
   height: $bar-subfooter-height;
+
+  .title {
+    height: $bar-subfooter-height - 1;
+    line-height: $bar-subfooter-height;
+  }
 }
 
 .nav-bar-block {
@@ -401,4 +415,3 @@
 .nav-bar-tabs-top .bar {
   background-image: none;
 }
-
